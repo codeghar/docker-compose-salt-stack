@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+    master:
+        build:
+            context: ./master
+        image: localhost/salt-master
+        privileged: true
+        tty: true
+
+    minion:
+        build:
+            context: ./minion
+        image: localhost/salt-minion
+        tty: true
