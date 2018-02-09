@@ -13,3 +13,5 @@ services:
             context: ./minion
         image: localhost/salt-minion
         tty: true
+        volumes:
+            - ./minion/conf:/etc/salt/minion.d:ro

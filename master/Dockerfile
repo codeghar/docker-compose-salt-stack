@@ -11,3 +11,5 @@ RUN    apt update \
     && apt install -y salt-master
 
 CMD ["/sbin/init"]
+
+EXPOSE 4505/tcp 4506/tcp

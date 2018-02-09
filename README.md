@@ -77,3 +77,19 @@ Contains example for Ubuntu 14.04.
 Configures the repo to always track latest release. Modify it to track a
 specific version. Modify *minion/Dockerfile* as well to synchronize changes.
 More information at https://repo.saltstack.com/#ubuntu.
+
+## minion/conf/override.conf
+
+After the master is up, get its public key fingerprint.
+
+        $ make exec-master
+        # salt-key -F master
+
+Replace *CHANGEME* for the key *master_finger* in *minion/conf/override.conf*
+file with the value of the public key finger print.
+
+If you have not already started *salt-minion* service on the minion then start
+it. Otherwise, restart it.
+
+        $ make exec-minion
+        # service salt-minion start
