@@ -17,7 +17,8 @@ $(PWD)/master/pki/master: | $(PWD)/master/pki
 	ssh-keygen -t rsa -b 4096 -f $(PWD)/master/pki/master -N ''
 
 $(PWD)/master/pki/master.pem: | $(PWD)/master/pki/master
-	ssh-keygen -b 4096 -f $(PWD)/master/pki/master -m PEM -e > $(PWD)/master/pki/master.pem
+	cp $(PWD)/master/pki/master $(PWD)/master/pki/master.pem
+	# ssh-keygen -f $(PWD)/master/pki/master -m PEM -e > $(PWD)/master/pki/master.pem
 
 .PHONY: up
 up:
