@@ -5,8 +5,14 @@ services:
         build:
             context: ./master
         image: localhost/salt-master
+        # required to run systemd in the container
         privileged: true
         tty: true
+        volumes:
+            - ./master/pki/master.pem:/etc/salt/pki/master/master.pem:ro
+            - ./master/pki/master.pub:/etc/salt/pki/master/master.pub:ro
+        # salt master expects, by default, to find sls files here
+        working_dir: /srv/salt
 
     minion:
         build:

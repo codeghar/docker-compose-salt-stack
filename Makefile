@@ -1,9 +1,23 @@
+PWD := $(shell pwd)
+
 .PHONY: init
-init: install-prerequisites
+init: install-prerequisites ssh-keys
 
 .PHONY: install-prerequisites
 install-prerequisites:
 	pipenv install
+
+.PHONY: ssh-keys
+ssh-keys: | $(PWD)/master/pki/master.pem
+
+$(PWD)/master/pki:
+	mkdir -p $(PWD)/master/pki
+
+$(PWD)/master/pki/master: | $(PWD)/master/pki
+	ssh-keygen -t rsa -b 4096 -f $(PWD)/master/pki/master -N ''
+
+$(PWD)/master/pki/master.pem: | $(PWD)/master/pki/master
+	ssh-keygen -b 4096 -f $(PWD)/master/pki/master -m PEM -e > $(PWD)/master/pki/master.pem
 
 .PHONY: up
 up:
