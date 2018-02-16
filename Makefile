@@ -43,6 +43,14 @@ exec-minion:
 build:
 	pipenv run docker-compose build
 
+.PHONY: start
+start:
+	pipenv run docker-compose start
+
+.PHONY: stop
+stop:
+	pipenv run docker-compose stop
+
 .PHONY: clean
 clean: down
 
