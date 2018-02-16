@@ -93,3 +93,12 @@ it. Otherwise, restart it.
 
         $ make exec-minion
         # service salt-minion start
+
+# Notes
+
+## Minion
+
+Minion doesn't start when the container is started. User has to start it
+manually,
+
+        $ service salt-minion start
