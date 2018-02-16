@@ -2,6 +2,10 @@ PWD := $(shell pwd)
 
 .PHONY: init
 init: install-prerequisites ssh-keys set-master-ssh-key-fingerprint-in-minion-config
+	@echo 'Set git to ignore any changes made to $(PWD)/minion/conf/override.conf'
+	git update-index --assume-unchanged $(PWD)/minion/conf/override.conf
+	@echo 'Run the following command to set git to track changes in the file again'
+	@echo '    git update-index --no-assume-unchanged $(PWD)/minion/conf/override.conf'
 
 .PHONY: install-prerequisites
 install-prerequisites:
