@@ -15,21 +15,25 @@ config or ideas, etc.
         $ make init
 
 1. Installs required Python packages using ``pipenv``.
-2. Generates ssh keys for master and minion. If keys already exist, they are *not* replaced.
+2. Generates ssh keys for master and minion. The keys are *not* replaced if they already exist in the right directories.
 3. Modifies *./minion/conf/override.conf* to set the *master_finger* value based on the ssh keys generated in step 2.
-4. Sets ``git`` to ignore any changes made to *./minion/conf/override.conf*. This is done because of the changes made in step 3.
+4. Runs ``git update-index --assume-unchanged ./minion/conf/override.conf`` to ignore any changes made to the file. This is done because of the changes made in step 3. Manually revert this with ``git update-index --no-assume-unchanged ./minion/conf/override.conf``.
 
 # Environment Lifecycle
 
 ``docker-compose`` is used to manage the lifecycle of containers. Helper
-targets in ``make`` are *up*, *down*, and *ps* based on their counterparts
-*up -d*, *down*, and *ps* respectively in ``docker-compose``.
+targets in ``make`` are *up*, *down*, *start*, *stop*, and *ps* based on their
+counterparts *up -d*, *down*, *start*, *stop*, and *ps* respectively in
+``docker-compose``.
 
         $ make up
         $ make ps
+        $ make stop
+        $ make start
         $ make down
 
-A helper target to build the master and minion Docker images is *build*.
+A helper target to build the master and minion Docker images is *build*. Since
+it uses ``docker-compose``, the images will be built if needed.
 
         $ make build
 
@@ -45,11 +49,25 @@ Get a list of all ``make`` targets.
 
         $ make list
 
+The *Makefile* is pretty simple; feel free to read it for more information.
+
 ## Caution
 
 Cleaning up the environment is synonymous with *down*.
 
         $ make clean
+
+## Alert
+
+Destroying the environment rollsback changes made to the git repo in the *init*
+target.
+
+        $ make destroy
+
+1. Deletes *pki* directories under *master* and *minion*.
+2. Removes any .bak* files in *./minion/conf*.
+3. Runs ``git update-index --no-assume-unchanged ./minion/conf/override.conf``.
+4. Reverts *./minion/conf/override.conf* to the version in last commit.
 
 # Customize
 
@@ -57,7 +75,12 @@ These files are prime candidates to customize for your needs.
 
 ## docker-compose.yml
 
-May not require too much attention but you never know.
+Add volume(s) to the master container that contain the Salt config. Map it to
+*/srv/salt* in the container,
+
+        volumes:
+            - *Other mappings already present*
+            - /path/to/salt/config:/srv/salt:ro
 
 ## Makefile
 
@@ -69,8 +92,8 @@ Contains example for Ubuntu 16.04.
 
 ## master/saltstack.list
 
-Configures the repo to always track latest release. Modify it to track a
-specific version. Modify *master/Dockerfile* as well to synchronize changes.
+Configures a deb repo to always track latest release. Modify it to track a
+specific version. Modify *./master/Dockerfile* as well to synchronize changes.
 More information at https://repo.saltstack.com/#ubuntu.
 
 ## minion/Dockerfile
@@ -79,8 +102,8 @@ Contains example for Ubuntu 14.04.
 
 ## minion/saltstack.list
 
-Configures the repo to always track latest release. Modify it to track a
-specific version. Modify *minion/Dockerfile* as well to synchronize changes.
+Configures a deb repo to always track latest release. Modify it to track a
+specific version. Modify *./minion/Dockerfile* as well to synchronize changes.
 More information at https://repo.saltstack.com/#ubuntu.
 
 ## minion/conf/override.conf
@@ -94,7 +117,7 @@ After the master is up, get its public key fingerprint.
         $ make exec-master
         # salt-key -F master
 
-Replace *CHANGEME* for the key *master_finger* in *minion/conf/override.conf*
+Replace *CHANGEME* for the key *master_finger* in *./minion/conf/override.conf*
 file with the value of the public key finger print.
 
 If you have not already started *salt-minion* service on the minion then start
@@ -110,4 +133,5 @@ it. Otherwise, restart it.
 Minion doesn't start when the container is started. User has to start it
 manually,
 
-        $ service salt-minion start
+        $ make exec-minion
+        # service salt-minion start
