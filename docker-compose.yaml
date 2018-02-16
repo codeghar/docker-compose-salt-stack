@@ -11,8 +11,6 @@ services:
         volumes:
             - ./master/pki/master.pem:/etc/salt/pki/master/master.pem:ro
             - ./master/pki/master.pub:/etc/salt/pki/master/master.pub:ro
-            - ./minion/pki/minion.pem:/etc/salt/pki/minion/minion.pem:ro
-            - ./minion/pki/minion.pub:/etc/salt/pki/minion/minion.pub:ro
         # salt master expects, by default, to find sls files here
         working_dir: /srv/salt
 
@@ -23,3 +21,5 @@ services:
         tty: true
         volumes:
             - ./minion/conf:/etc/salt/minion.d:ro
+            - ./minion/pki/minion.pem:/etc/salt/pki/minion/minion.pem:ro
+            - ./minion/pki/minion.pub:/etc/salt/pki/minion/minion.pub:ro
