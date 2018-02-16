@@ -80,6 +80,10 @@ More information at https://repo.saltstack.com/#ubuntu.
 
 ## minion/conf/override.conf
 
+When you're using ``make init``, this step becomes unnecessary. The reason is
+that our own generated keys are mounted in the master container. The *init*
+target takes care of getting the fingerprint and modifying the minion config.
+
 After the master is up, get its public key fingerprint.
 
         $ make exec-master

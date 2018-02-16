@@ -1,7 +1,7 @@
 PWD := $(shell pwd)
 
 .PHONY: init
-init: install-prerequisites ssh-keys
+init: install-prerequisites ssh-keys set-master-ssh-key-fingerprint-in-minion-config
 
 .PHONY: install-prerequisites
 install-prerequisites:
@@ -28,6 +28,15 @@ $(PWD)/minion/pki/minion: | $(PWD)/minion/pki
 
 $(PWD)/minion/pki/minion.pem: | $(PWD)/minion/pki/minion
 	cp $(PWD)/minion/pki/minion $(PWD)/minion/pki/minion.pem
+
+.PHONY: set-master-ssh-key-fingerprint-in-minion-config
+set-master-ssh-key-fingerprint-in-minion-config: ssh-keys
+	@{ \
+		fp=$$(ssh-keygen -l -E md5 -f $(PWD)/master/pki/master.pem | awk '{print $$2}' | sed 's/^MD5://g') ; \
+		cp $(PWD)/minion/conf/override.conf $(PWD)/minion/conf/override.conf.bak ; \
+		sed -i.bak '/^master_finger: /d' $(PWD)/minion/conf/override.conf ; \
+		echo "master_finger: '$${fp}'" >> $(PWD)/minion/conf/override.conf ; \
+	}
 
 .PHONY: up
 up:
