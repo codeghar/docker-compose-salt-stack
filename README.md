@@ -16,7 +16,7 @@ config or ideas, etc.
 
 1. Installs required Python packages using ``pipenv``.
 2. Generates ssh keys for master and minion. If keys already exist, they are *not* replaced.
-3. Modifies *minion/conf/override.conf* to set the *master_finer* value based on the ssh keys generated in step 2.
+3. Modifies *./minion/conf/override.conf* to set the *master_finger* value based on the ssh keys generated in step 2.
 4. Sets ``git`` to ignore any changes made to *./minion/conf/override.conf*. This is done because of the changes made in step 3.
 
 # Environment Lifecycle
