@@ -6,6 +6,10 @@ init: install-prerequisites ssh-keys set-master-ssh-key-fingerprint-in-minion-co
 	git update-index --assume-unchanged $(PWD)/minion/conf/override.conf
 	@echo 'Run the following command to set git to track changes in the file again'
 	@echo '    git update-index --no-assume-unchanged $(PWD)/minion/conf/override.conf'
+	@echo 'Set git to ignore any changes made to $(PWD)/docker-compose.yaml'
+	git update-index --assume-unchanged $(PWD)/docker-compose.yaml
+	@echo 'Run the following command to set git to track changes in the file again'
+	@echo '    git update-index --no-assume-unchanged $(PWD)/docker-compose.yaml'
 
 .PHONY: install-prerequisites
 install-prerequisites:
@@ -84,6 +88,8 @@ destroy: clean
 	rm $(PWD)/minion/conf/*.bak*
 	git update-index --no-assume-unchanged $(PWD)/minion/conf/override.conf
 	git checkout $(PWD)/minion/conf/override.conf
+	git update-index --no-assume-unchanged $(PWD)/docker-compose.yaml
+	git checkout $(PWD)/docker-compose.yaml
 
 # https://stackoverflow.com/a/26339924
 # @$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs

@@ -18,6 +18,7 @@ config or ideas, etc.
 2. Generates ssh keys for master and minion. The keys are *not* replaced if they already exist in the right directories.
 3. Modifies *./minion/conf/override.conf* to set the *master_finger* value based on the ssh keys generated in step 2.
 4. Runs ``git update-index --assume-unchanged ./minion/conf/override.conf`` to ignore any changes made to the file. This is done because of the changes made in step 3. Manually revert this with ``git update-index --no-assume-unchanged ./minion/conf/override.conf``.
+5. Runs ``git update-index --assume-unchanged ./docker-compose.yaml`` to ignore any changes made to the file as described in the Customize section. Manually revert this with ``git update-index --no-assume-unchanged ./docker-compose.yaml``.
 
 # Environment Lifecycle
 
@@ -68,6 +69,8 @@ target.
 2. Removes any .bak* files in *./minion/conf*.
 3. Runs ``git update-index --no-assume-unchanged ./minion/conf/override.conf``.
 4. Reverts *./minion/conf/override.conf* to the version in last commit.
+5. Runs ``git update-index --no-assume-unchanged ./docker-compose.yaml``.
+6. Reverts *./docker-compose.yaml* to the version in last commit.
 
 # Customize
 
