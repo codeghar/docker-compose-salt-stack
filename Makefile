@@ -8,7 +8,7 @@ install-prerequisites:
 	pipenv install
 
 .PHONY: ssh-keys
-ssh-keys: | $(PWD)/master/pki/master.pem
+ssh-keys: | $(PWD)/master/pki/master.pem $(PWD)/minion/pki/minion.pem
 
 $(PWD)/master/pki:
 	mkdir -p $(PWD)/master/pki
@@ -19,6 +19,15 @@ $(PWD)/master/pki/master: | $(PWD)/master/pki
 $(PWD)/master/pki/master.pem: | $(PWD)/master/pki/master
 	cp $(PWD)/master/pki/master $(PWD)/master/pki/master.pem
 	# ssh-keygen -f $(PWD)/master/pki/master -m PEM -e > $(PWD)/master/pki/master.pem
+
+$(PWD)/minion/pki:
+	mkdir -p $(PWD)/minion/pki
+
+$(PWD)/minion/pki/minion: | $(PWD)/minion/pki
+	ssh-keygen -t rsa -b 4096 -f $(PWD)/minion/pki/minion -N ''
+
+$(PWD)/minion/pki/minion.pem: | $(PWD)/minion/pki/minion
+	cp $(PWD)/minion/pki/minion $(PWD)/minion/pki/minion.pem
 
 .PHONY: up
 up:
