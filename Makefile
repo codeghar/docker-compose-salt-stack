@@ -1,7 +1,7 @@
 PWD := $(shell pwd)
 
 .PHONY: init
-init: install-prerequisites ssh-keys set-master-ssh-key-fingerprint-in-minion-config
+init: install-prerequisites pki set-master-ssh-key-fingerprint-in-minion-config
 	@echo 'Set git to ignore any changes made to $(PWD)/minion/conf/override.conf'
 	git update-index --assume-unchanged $(PWD)/minion/conf/override.conf
 	@echo 'Run the following command to set git to track changes in the file again'
@@ -15,32 +15,26 @@ init: install-prerequisites ssh-keys set-master-ssh-key-fingerprint-in-minion-co
 install-prerequisites:
 	pipenv install
 
-.PHONY: ssh-keys
-ssh-keys: | $(PWD)/master/pki/master.pem $(PWD)/minion/pki/minion.pem
+.PHONY: pki
+pki: | $(PWD)/master/pki/master.pem $(PWD)/minion/pki/minion.pem
 
 $(PWD)/master/pki:
 	mkdir -p $(PWD)/master/pki
 
-$(PWD)/master/pki/master: | $(PWD)/master/pki
-	ssh-keygen -t rsa -b 4096 -f $(PWD)/master/pki/master -N ''
-
-$(PWD)/master/pki/master.pem: | $(PWD)/master/pki/master
-	cp $(PWD)/master/pki/master $(PWD)/master/pki/master.pem
-	# ssh-keygen -f $(PWD)/master/pki/master -m PEM -e > $(PWD)/master/pki/master.pem
+$(PWD)/master/pki/master.pem:
+	cd $(PWD)/master/pki/ && pipenv run salt-key --gen-keys=master
 
 $(PWD)/minion/pki:
 	mkdir -p $(PWD)/minion/pki
 
-$(PWD)/minion/pki/minion: | $(PWD)/minion/pki
-	ssh-keygen -t rsa -b 4096 -f $(PWD)/minion/pki/minion -N ''
-
-$(PWD)/minion/pki/minion.pem: | $(PWD)/minion/pki/minion
-	cp $(PWD)/minion/pki/minion $(PWD)/minion/pki/minion.pem
+$(PWD)/minion/pki/minion.pem:
+	cd $(PWD)/minion/pki/ && pipenv run salt-key --gen-keys=minion
 
 .PHONY: set-master-ssh-key-fingerprint-in-minion-config
-set-master-ssh-key-fingerprint-in-minion-config: ssh-keys
+set-master-ssh-key-fingerprint-in-minion-config: pki
 	@{ \
-		fp=$$(ssh-keygen -l -E md5 -f $(PWD)/master/pki/master.pem | awk '{print $$2}' | sed 's/^MD5://g') ; \
+		pyt=$$(pipenv --py) ; \
+		fp=$$($${pyt} -c 'from salt import utils; print(utils.pem_finger(path="$(PWD)/master/pki/master.pub"))') ; \
 		cp $(PWD)/minion/conf/override.conf $(PWD)/minion/conf/override.conf.bak ; \
 		sed -i.bak '/^master_finger: /d' $(PWD)/minion/conf/override.conf ; \
 		echo "master_finger: '$${fp}'" >> $(PWD)/minion/conf/override.conf ; \

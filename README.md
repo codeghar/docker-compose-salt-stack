@@ -15,7 +15,7 @@ config or ideas, etc.
         $ make init
 
 1. Installs required Python packages using ``pipenv``.
-2. Generates ssh keys for master and minion. The keys are *not* replaced if they already exist in the right directories.
+2. Generates pki keys for master and minion. The keys are *not* replaced if they already exist in the right directories.
 3. Modifies *./minion/conf/override.conf* to set the *master_finger* value based on the ssh keys generated in step 2.
 4. Runs ``git update-index --assume-unchanged ./minion/conf/override.conf`` to ignore any changes made to the file. This is done because of the changes made in step 3. Manually revert this with ``git update-index --no-assume-unchanged ./minion/conf/override.conf``.
 5. Runs ``git update-index --assume-unchanged ./docker-compose.yaml`` to ignore any changes made to the file as described in the Customize section. Manually revert this with ``git update-index --no-assume-unchanged ./docker-compose.yaml``.
@@ -87,7 +87,17 @@ Add volume(s) to the master container that contain the Salt config. Map it to
 
 ## Makefile
 
-May not require too much attention but you never know.
+The targets to create pki keys for master and minion are
+*$(PWD)/master/pki/master.pem* and *$(PWD)/minion/pki/minion.pem*. They are
+called as part of the *init* target. The reason both use the pattern of
+changing directory and generating the key because of ``salt-key``
+[behavior](https://groups.google.com/forum/#!topic/salt-users/GXTbkz5GZQU). If
+the behavior changes in future, this workaround pattern may not be necessary.
+
+The *set-master-ssh-key-fingerprint-in-minion-config* target uses a Python
+command snippet which imports Salt and runs the ``pem_finger`` function.
+The import path will change between Salt versions 2017.7.3 and 2018.1. Fix the
+import path when needed.
 
 ## master/Dockerfile
 

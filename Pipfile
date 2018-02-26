@@ -8,6 +8,7 @@ name = "pypi"
 [packages]
 
 docker-compose = "*"
+salt = "*"
 
 
 [dev-packages]
