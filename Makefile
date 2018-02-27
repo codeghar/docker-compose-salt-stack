@@ -21,13 +21,13 @@ pki: | $(PWD)/master/pki/master.pem $(PWD)/minion/pki/minion.pem
 $(PWD)/master/pki:
 	mkdir -p $(PWD)/master/pki
 
-$(PWD)/master/pki/master.pem:
+$(PWD)/master/pki/master.pem: | $(PWD)/master/pki
 	cd $(PWD)/master/pki/ && pipenv run salt-key --gen-keys=master
 
 $(PWD)/minion/pki:
 	mkdir -p $(PWD)/minion/pki
 
-$(PWD)/minion/pki/minion.pem:
+$(PWD)/minion/pki/minion.pem: | $(PWD)/minion/pki
 	cd $(PWD)/minion/pki/ && pipenv run salt-key --gen-keys=minion
 
 .PHONY: set-master-ssh-key-fingerprint-in-minion-config
@@ -43,6 +43,10 @@ set-master-ssh-key-fingerprint-in-minion-config: pki
 .PHONY: up
 up:
 	pipenv run docker-compose up -d
+	pipenv run docker-compose exec master service salt-master start
+	pipenv run docker-compose exec minion service salt-minion start
+	sleep 5s
+	pipenv run docker-compose exec master salt-key --accept-all --yes
 
 .PHONY: down
 down:
@@ -67,6 +71,8 @@ build:
 .PHONY: start
 start:
 	pipenv run docker-compose start
+	pipenv run docker-compose exec master service salt-master start
+	pipenv run docker-compose exec minion service salt-minion start
 
 .PHONY: stop
 stop:
