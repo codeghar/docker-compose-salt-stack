@@ -34,7 +34,7 @@ $(PWD)/minion/pki/minion.pem: | $(PWD)/minion/pki
 set-master-ssh-key-fingerprint-in-minion-config: pki
 	@{ \
 		pyt=$$(pipenv --py) ; \
-		fp=$$($${pyt} -c 'from salt import utils; print(utils.pem_finger(path="$(PWD)/master/pki/master.pub"))') ; \
+		fp=$$($${pyt} -c 'from salt.utils import crypt; print(crypt.pem_finger(path="master/pki/master.pub"))'); \
 		cp $(PWD)/minion/conf/override.conf $(PWD)/minion/conf/override.conf.bak ; \
 		sed -i.bak '/^master_finger: /d' $(PWD)/minion/conf/override.conf ; \
 		echo "master_finger: '$${fp}'" >> $(PWD)/minion/conf/override.conf ; \
@@ -85,7 +85,7 @@ clean: down
 destroy: clean
 	rm -rf $(PWD)/master/pki
 	rm -rf $(PWD)/minion/pki
-	rm $(PWD)/minion/conf/*.bak*
+	rm -f $(PWD)/minion/conf/*.bak*
 	git update-index --no-assume-unchanged $(PWD)/minion/conf/override.conf
 	git checkout $(PWD)/minion/conf/override.conf
 	git update-index --no-assume-unchanged $(PWD)/docker-compose.yaml
