@@ -9,6 +9,7 @@ config or ideas, etc.
 * Python 3.6+
 * [pipenv](https://docs.pipenv.org/)
 * GNU make
+* Build tools like gcc, etc., for dependencies of Docker Compose and Salt
 
 # Initial Setup
 
@@ -101,7 +102,7 @@ import path when needed.
 
 ## master/Dockerfile
 
-Contains example for Ubuntu 16.04.
+Contains example for Ubuntu 18.04.
 
 ## master/saltstack.list
 
@@ -111,7 +112,7 @@ More information at https://repo.saltstack.com/#ubuntu.
 
 ## minion/Dockerfile
 
-Contains example for Ubuntu 14.04.
+Contains example for Ubuntu 18.04.
 
 ## minion/saltstack.list
 
@@ -143,7 +144,7 @@ it. Otherwise, restart it.
 
 ## Minion
 
-Minion doesn't start when the container is started. User has to start it
+Minion may not start when the container is started. User may have to start it
 manually,
 
         $ make exec-minion
