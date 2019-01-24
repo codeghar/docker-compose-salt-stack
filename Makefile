@@ -55,13 +55,13 @@ $(PWD)/master/pki:
 	mkdir -p $(PWD)/master/pki
 
 $(PWD)/master/pki/master.pem: | $(PWD)/master/pki
-	cd $(PWD)/master/pki/ && pipenv run salt-key --gen-keys=master
+	pipenv run salt-key --gen-keys=master --gen-keys-dir=master/pki/
 
 $(PWD)/minion/pki:
 	mkdir -p $(PWD)/minion/pki
 
 $(PWD)/minion/pki/minion.pem: | $(PWD)/minion/pki
-	cd $(PWD)/minion/pki/ && pipenv run salt-key --gen-keys=minion
+	pipenv run salt-key --gen-keys=minion --gen-keys-dir=minion/pki/
 
 .PHONY: set-master-ssh-key-fingerprint-in-minion-config
 set-master-ssh-key-fingerprint-in-minion-config: pki
