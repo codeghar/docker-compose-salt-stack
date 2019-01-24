@@ -1,0 +1,46 @@
+diff --git a/master/Dockerfile b/master/Dockerfile
+index c2bfb79..4dabd30 100644
+--- a/master/Dockerfile
++++ b/master/Dockerfile
+@@ -1,9 +1,9 @@
+-FROM ubuntu:18.04
++FROM ubuntu:16.04
+
+ RUN    echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+     && apt update \
+     && apt install -y apt-transport-https bash curl gnupg2 python3 unzip vim zip \
+-    && curl -fsSL https://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest/SALTSTACK-GPG-KEY.pub | apt-key add -
++    && curl -fsSL https://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest/SALTSTACK-GPG-KEY.pub | apt-key add -
+
+ # https://repo.saltstack.com/#ubuntu
+ COPY saltstack.list /etc/apt/sources.list.d/saltstack.list
+diff --git a/master/saltstack.list b/master/saltstack.list
+index 6f114d2..454d68a 100644
+--- a/master/saltstack.list
++++ b/master/saltstack.list
+@@ -1 +1 @@
+-deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest bionic main
++deb http://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest xenial main
+diff --git a/minion/Dockerfile b/minion/Dockerfile
+index 2b2c332..75966eb 100644
+--- a/minion/Dockerfile
++++ b/minion/Dockerfile
+@@ -1,9 +1,9 @@
+-FROM ubuntu:18.04
++FROM ubuntu:16.04
+
+ RUN    echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+     && apt update \
+     && apt install -y apt-transport-https bash curl gnupg2 python3 unzip vim zip \
+-    && curl -fsSL https://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest/SALTSTACK-GPG-KEY.pub | apt-key add -
++    && curl -fsSL https://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest/SALTSTACK-GPG-KEY.pub | apt-key add -
+
+ # https://repo.saltstack.com/#ubuntu
+ COPY saltstack.list /etc/apt/sources.list.d/saltstack.list
+diff --git a/minion/saltstack.list b/minion/saltstack.list
+index 6f114d2..454d68a 100644
+--- a/minion/saltstack.list
++++ b/minion/saltstack.list
+@@ -1 +1 @@
+-deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest bionic main
++deb http://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest xenial main

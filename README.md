@@ -10,6 +10,9 @@ config or ideas, etc.
 * [pipenv](https://docs.pipenv.org/)
 * GNU make
 * Build tools like gcc, etc., for dependencies of Docker Compose and Salt
+* grep
+* git
+* sed
 
 # Initial Setup
 
@@ -149,3 +152,14 @@ manually,
 
         $ make exec-minion
         # service salt-minion start
+
+## Try Other Ubuntu Versions
+
+Instead of Ubuntu 18.04 you can use Ubuntu 16.04 or Ubuntu 14.04, like so,
+
+    $ make ubuntu-16.04 build up
+    $ make ubuntu-14.04 build up
+
+Go back to Ubuntu 18.04,
+
+    $ make clean
